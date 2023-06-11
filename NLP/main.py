@@ -88,7 +88,7 @@ def getDict(text):
     return diccionario
 
 
-def getInfo(text, outroute, outname="out"):
+def nerFromString(text, outroute, outname="out"):
     diccionario = getDict(text)
 
     jsonobj = json.dumps(diccionario, indent=4, ensure_ascii=False)
@@ -97,7 +97,7 @@ def getInfo(text, outroute, outname="out"):
         outfile.write(jsonobj)
 
 
-def getInfoCSV(inroute, outroute, outname="out"):
+def nerFromCSV(inroute, outroute, outname="out"):
     x = []
     with open(inroute, encoding="utf-8") as csvfile:
         spamreader = csvfile.readlines()
@@ -110,7 +110,7 @@ def getInfoCSV(inroute, outroute, outname="out"):
         outfile.write(jsonobj)
         
 
-def getInfoURL(url, outroute, outname="out"):
+def nerFromURL(url, outroute, outname="out"):
     response = requests.get(url)
 
     if response.status_code == 200:
