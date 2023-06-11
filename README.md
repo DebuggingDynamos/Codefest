@@ -6,9 +6,24 @@ Este proyecto forma parte de nuestra participación en el Codefest Ad Astra 2023
 - Análisis de la información disponible en noticias públicas para comprender mejor la afectación de la Amazonía colombiana
 
 ## Pre-requisitos
-_Que cosas necesitas para instalar el software y como instalarlas_
 ~~~~
-$pip install keras
-$
+pip install beautifulsoup4
+pip install joblib
+pip install jsonlib
+pip install keras
+pip install matplotlib
+pip install nltk
+pip install numpy
+pip install opencv-python
+pip install regex
+pip install requests
+pip install spacy
 ~~~~
+## Autores
+- Nicolas Rozo Fajardo - [MrCheesyBurgerU](https://github.com/MrCheesyBurgerU)
+- Manuela Pacheco Malagón [itsmemanuu](https://github.com/itsmemanuu)
+    
+## Licencia
+
+Este proyecto está bajo la Licencia (Tu Licencia) - mira el archivo LICENSE.md para detalles
 
