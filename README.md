@@ -20,6 +20,10 @@ pip install requests
 pip install spacy
 pip install dill
 pip install torch
+pip install torchvision
+pip install pyyaml
+pip install ultralytics
+pip install moviepy
 ~~~~
 
 También van a ser necesarios estos datasets que debes instalar utilizando los siguientes comandos desde el interpreter de python que se inicia con `python` o `py`:
