@@ -1,2 +1,3 @@
-data/Imagenes/video1/output1_0002.jpg
-**/*.jpg
+*/__pycache__
+*/*/*/__pycache__
+test.py

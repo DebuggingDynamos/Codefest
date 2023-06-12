@@ -18,7 +18,7 @@ def loadModel():
 
     global detector
     detector = torch.hub.load(
-        'ACPM/videoModels/yoloLib', 'custom', path='ACPM/videoModels/yoloLib/runs/train/exp9/weights/best.pt', source='local')  # local model
+        'ACPM/videoModels/yolo_lib', 'custom', path='ACPM/videoModels/yolo_lib/runs/train/exp9/weights/best.pt', source='local')  # local model
 
 
 def getFrames(videoPath, framesPerSecond):
