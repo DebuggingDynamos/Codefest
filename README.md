@@ -5,6 +5,7 @@ Este proyecto es el resultado de nuestra participación en el Codefest Ad Astra 
 - Indexación de objetos y el análisis de la afectación de la Amazonía en videos captados por sensores aerotransportados
 - Análisis de la información disponible en noticias públicas para comprender mejor la afectación de la Amazonía colombiana
 ## Pre-requisitos
+Antes de comenzar, asegúrate de tener instaladas las librerías necesarias. Puedes instalarlas utilizando los siguientes comandos:
 ~~~~
 pip install beautifulsoup4
 pip install joblib
@@ -18,15 +19,80 @@ pip install regex
 pip install requests
 pip install spacy
 ~~~~
-## Instalación
+
+También van a ser necesarios estos datasets que debes instalar utilizando los siguientes comandos desde el interpreter de python que se inicia con `python` o `py`:
+~~~~
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+nltk.download('maxent_ne_chunker')
+nltk.download('words')
+~~~~
+
 ## Uso
+1. **Clonación del Repositorio**: Para comenzar, asegúrate de clonar este repositorio en tu ambiente de trabajo local. Puedes utilizar el siguiente comando en tu terminal:
+   ```python
+   git clone https://github.com/DebuggingDynamos/Codefest.git
+   ```
+ 
+
+2. **Importación del Módulo**: Para utilizar las funciones proporcionadas por el paquete ACPM, importa el módulo `utils`. Puedes hacerlo utilizando la siguiente línea de código en tu script o entorno de desarrollo:
+   ```python
+   from ACPM import utils
+   ```
+
+3. **Carga de los Modelos**: Antes de poder utilizar las funciones del paquete ACPM, es necesario cargar los modelos necesarios. Esto se logra utilizando la función `init_models()`. Asegúrate de llamar a esta función antes de utilizar cualquier otra función del paquete. Puedes hacerlo de la siguiente manera:
+   ```python
+   utils.init_models()
+   ```
+   Esta función se encargará de cargar los modelos requeridos y prepararlos para su uso posterior.
+### Análisis de videos
+**detect_objects_in_video**
+
+Analiza un video y exporta un .csv con la información de los objetos reconocidos y una carpeta con las imágenes con los objetos reconocidos y etiquetados
+| Args        |                                                                                                                                    |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| video_path  | Un string con el texto a analizar con la dirección del archivo del video. Funciona independientemente del formato de video, sin embargo, puede afectar el tiempo de ejecución|
+| output_path | Un string con la dirección de la carpeta en la que serán exportados el archivo .csv y la carpeta con las imágenes analizadas |
+| frames_per_second    | Argumento opcional, valor por defecto: 1. Un entero que determina la frecuencia de la captura de imágenes, también afecta el tiempo de ejecución        |
+### Análisis de noticias
+**ner_from_str**
+
+Analiza una noticia dada en un string y exporta un archivo .json con etiquetas PER, LOC, ORG, DATE, MISC, y la clasifica por el impacto que tuvo en el medio ambiente.
+| Args        |                                                                                                                                    |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| text        | Un string con el texto a analizar                                                                                                   |
+| output_path | Un string con la dirección de la carpeta en la que será exportado el archivo .json. Esta carpeta debe haber sido creada de antemano |
+| out_name    | Argumento opcional, valor por defecto: out.json. Un string con el nombre del archivo sin .json                                                                       |
+<br />
+
+**ner_from_file**
+
+Analiza varias noticias separadas por newlines, dadas en un .csv y exporta un archivo .json con etiquetas PER, LOC, ORG, DATE, MISC, y las clasifica por el impacto que tuvo en el medio ambiente.
+| Args        |                                                                                                                                    |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| text_path        | Un string con la ruta del archivo csv de los textos a analizar                                                                                                   |
+| output_path | Un string con la dirección de la carpeta en la que será exportado el archivo .json. Esta carpeta debe haber sido creada de antemano |
+| out_name    | Argumento opcional, valor por defecto: out.json. Un string con el nombre del archivo sin .json                                                                       |
+<br />
+
+**ner_from_url**
+
+Analiza una noticia dada en un url y exporta un archivo .json con etiquetas PER, LOC, ORG, DATE, MISC, y la clasifica por el impacto que tuvo en el medio ambiente.
+| Args        |                                                                                                                                    |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| url        | Un string con la url del texto a analizar                                                                                                   |
+| output_path | Un string con la dirección de la carpeta en la que será exportado el archivo .json. Esta carpeta debe haber sido creada de antemano |
+| out_name    | Argumento opcional, valor por defecto: out.json. Un string con el nombre del archivo sin .json                                                                       |
 ## Estrategia
-### Análisis de video
+### Análisis de videos
 1. **Extracción de imágenes**: El video es procesado para convertirlo en una secuencia de imágenes. Se extraen los frames cada cierto tiempo. Por defecto, se selecciona una frecuencia de 1 frame por segundo (fps), pero el usuario tiene la opción de cambiar este valor según sus necesidades.
 
 2. **Clasificación de imágenes**: Se emplea una modificación del modelo [`MobileNet_v2`](https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4), originalmente desarrollado por Google. La capa de salida se ha modificado para tener dos neuronas con función de activación softmax. El propósito es etiquetar las imágenes como 0 (no de interés) o 1 (de interés), con el fin de eliminar aquellas que no aporten valor al análisis.
 
-3. **Detección de objetos**: Las imágenes clasificadas como "de interés" por el primer modelo son ingresadas a un segundo modelo basado en el algoritmo de detección de objetos [`YOLO`](). Gracias al entrenamiento realizado, este modelo retorna las imágenes con los objetos relevantes señalados por un recuadro.
+3. **Detección de objetos**: Las imágenes clasificadas como "de interés" por el primer modelo son ingresadas a un segundo modelo basado en el algoritmo de detección de objetos [`YOLO`](https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data). Gracias al entrenamiento realizado, este modelo retorna las imágenes con los objetos relevantes señalados por un recuadro.
 ### Análisis de noticias
 1. **Identificación de Entidades**: Para la identificación de las entidades PER, LOC, ORG y MISC, se utiliza el modelo [`es_core_news_lg`](https://spacy.io/models/es#es_core_news_lg) de spaCy, una biblioteca de procesamiento de lenguaje natural. Este modelo preentrenado ofrece un rendimiento adecuado para el idioma español.
 
@@ -45,4 +111,3 @@ pip install spacy
 - Juan Montenegro - 
 ## Licencia
 Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo [`LICENSE`](https://github.com/DebuggingDynamos/Codefest/blob/main/LICENSE).
-
