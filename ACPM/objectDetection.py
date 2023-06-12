@@ -1,3 +1,4 @@
+import csv
 import os
 
 import cv2
@@ -19,6 +20,7 @@ def loadModel():
     detector = torch.hub.load(
         'ACPM/videoModels/yoloLib', 'custom', path='ACPM/videoModels/yoloLib/runs/train/exp9/weights/best.pt', source='local')  # local model
 
+
 def getFrames(videoPath, framesPerSecond):
 
     # Parámetros
@@ -34,13 +36,16 @@ def getFrames(videoPath, framesPerSecond):
 
     # Se crea la ruta a la carpeta que almacenara las imagenes obtenidas
 
-    filename, _ = os.path.splitext("frames_extracted")
+    outputFileName, _ = os.path.splitext("frames_extracted")
 
     # Se crea la carpeta en caso de que no exista
 
-    if not os.path.isdir(filename):
-
-        os.mkdir(filename)
+    if not os.path.isdir(outputFileName):
+        os.mkdir(outputFileName)
+    else:
+        for file in os.listdir(outputFileName):
+            if file[0] != ".":
+                os.remove(os.path.join(outputFileName, file))
 
     # Se inicializa el contador de frames
 
@@ -49,14 +54,32 @@ def getFrames(videoPath, framesPerSecond):
     # Se define el paso o avance en la duracion del video
 
     step = 1/framesPerSecond
+    print("Nombre: ", video.filename)
+    print("Duracion: ", video.duration)
+
+    iterator = np.arange(0, video.duration, step)
+    loadIcon = "▓"
+    count = 0
+    barCount = 0
 
     # Se extraen los frames del video
 
-    for current_duration in np.arange(0, video.duration, step):
+    for current_duration in iterator:
 
-        frame_filename = os.path.join(filename, f"frame{counter}.jpg")
+        frame_filename = os.path.join(outputFileName, f"frame{counter}.jpg")
         video.save_frame(frame_filename, current_duration)
+        barCount = int((current_duration / video.duration) * 100)
+        loadbar = loadIcon * barCount + "_" * (100 - barCount)
+        print(f"[{loadbar}] {round(current_duration, 2)}/{video.duration}", end="\r")
+
+        frameFilename = os.path.join(
+            outputFileName, f"frame{counter}.jpg")
+        video.save_frame(frameFilename, current_duration)
         counter += 1
+        
+        count += step
+    print(f"[{loadIcon * 100}] {video.duration}/{video.duration}")
+
 
     # Se cierra el archivo asociado al video
 
@@ -83,8 +106,6 @@ def detectObjectsInVideo(videoPath, outputPath, framesPerSecond):
 
     validImages = []
 
-    # Iteramos sobre las imagenes obtenidas anteriormente
-
     for frameNumber in range(0, numImages):
 
         imgpath = "frames_extracted/frame"+str(frameNumber)+".jpg"
@@ -99,5 +120,10 @@ def detectObjectsInVideo(videoPath, outputPath, framesPerSecond):
 
     results = detector(validImages)
     results.save(save_dir=outputPath)
-    
+    create_csv_file(results.names, outputPath + "/results.csv")
 
+
+def create_csv_file(data, filename):
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(data)
