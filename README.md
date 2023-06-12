@@ -58,7 +58,7 @@ Analiza un video y exporta un .csv con la información de los objetos reconocido
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | video_path  | Un string con el texto a analizar con la dirección del archivo del video. Funciona independientemente del formato de video, sin embargo, puede afectar el tiempo de ejecución|
 | output_path | Un string con la dirección de la carpeta en la que serán exportados el archivo .csv y la carpeta con las imágenes analizadas |
-| frames_per_second    | Argumento opcional, valor por defecto: 1. Un entero que determina la frecuencia de la captura de imágenes, también afecta el tiempo de ejecución        |
+| frames_per_second    | Argumento opcional, valor por defecto: 1. Un flotante que determina la frecuencia de la captura de imágenes, también afecta el tiempo de ejecución        |
 ### Análisis de noticias
 **ner_from_str**
 
