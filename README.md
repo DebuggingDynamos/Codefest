@@ -18,6 +18,8 @@ pip install opencv-python
 pip install regex
 pip install requests
 pip install spacy
+pip install dill
+pip install torch
 ~~~~
 
 También van a ser necesarios estos datasets que debes instalar utilizando los siguientes comandos desde el interpreter de python que se inicia con `python` o `py`:
